@@ -1,5 +1,7 @@
 package com.esaych.edline.api;
 
+import java.util.ArrayList;
+
 public class Grades {
 	private String src;
 	private String textsrc;
@@ -17,7 +19,13 @@ public class Grades {
 		
 		System.out.println(textsrc);
 		
+		String scores = textsrc.substring(textsrc.indexOf("Category"),textsrc.indexOf("Current Assignments")-1).replace("\n", " ").replace("&nbsp", "*").trim();
+		String work = textsrc.substring(textsrc.indexOf("Current Assignments")).replace("\n", " ").replace("&nbsp", "*").trim();
 		
+		ArrayList<Category> categories;
+		int i = scores.indexOf("*");
+		
+		ArrayList<Assignment> assignments;
 	}
 	
 	private String shaveSrc(String src) {
@@ -42,8 +50,17 @@ class Category {
 	double max; 
 	double percent;
 	
-	Category(String src) {
-		
+	Category(String src) {//Source is a single row of info
+		int i = 0;
+		this.name=src.substring(i,src.indexOf("\n"));
+		i=src.indexOf("\n");
+		this.weight=Integer.valueOf(src.substring(i,src.indexOf("\n",i)));
+		i=src.indexOf("\n",i);
+		this.pts=Double.valueOf(src.substring(i,src.indexOf("\n",i)));
+		i=src.indexOf("\n",i);
+		this.max=Double.valueOf(src.substring(i,src.indexOf("\n",i)));
+		i=src.indexOf("\n",i);
+		this.percent=Double.valueOf(src.substring(i,src.indexOf("\n",i)));
 	}
 }
 
