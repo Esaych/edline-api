@@ -15,9 +15,9 @@ public class Edline {
 	public static void main(String[] args) throws Exception {
 		Scanner input = new Scanner(System.in);
 		System.out.println("Edline Login:\nUsername: ");
-		String username = input.nextLine();
+		String username = "avenoo";//input.nextLine();
 		System.out.println("Password: ");
-		String password = input.nextLine();
+		String password = "rob123dude";//input.nextLine();
 		input.close();
 		Response res = Connect.login(username, password);
 		parseClasses(res);
