@@ -39,8 +39,10 @@ public class Connect {
 		System.out.println("Login Cookies: " + loginCookies);
 
 		System.out.println("Connected to: " + res.url());
-		if (res.url().toString().contains("Notification.page"))
+		if (res.url().toString().contains("Notification.page")) {
 			System.out.println("Username and Password Incorrect");
+			System.exit(1);
+		}
 
 		return res;
 	}
