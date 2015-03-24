@@ -20,6 +20,8 @@ public class Grades {
 		src = source.substring(source.indexOf("<div class=\"edlDocViewContents\" style=\"\" >"), source.indexOf("</div>" , source.indexOf("<div class=\"edlDocViewContents\" style=\"\" >")));
 		srcarray = shaveSrc(src);
 		
+		System.out.println("\n\n");
+		
 		//Collect teacher name
 		teacher = src.substring(src.indexOf("Teacher: ") + 9, src.indexOf("<", src.indexOf("Teacher: ")));
 		System.out.println("Class: " + course + " tought by teacher: " + teacher);
@@ -41,6 +43,7 @@ public class Grades {
 		
 		//after the categories there is current grades row, found here
 		classGrade = Double.parseDouble(it.next()); //TODO: see if this breaks when no grades entered
+		System.out.println("\nCurrent Grade: " + classGrade + "%\n");
 		advanceIterator("Current Assignments");
 		advanceIterator("[STARTROW]");
 		
@@ -169,7 +172,7 @@ class Assignment {
 			} catch (NumberFormatException e2) {
 				this.max = 0;
 			}
-			this.letter = ' ';
+			this.letter = (letter + ' ').charAt(0);
 
 			incomplete = true;
 		}
