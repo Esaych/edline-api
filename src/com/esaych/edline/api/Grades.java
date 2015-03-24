@@ -1,57 +1,110 @@
 package com.esaych.edline.api;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Grades {
 	private String src;
-	private String textsrc;
+	private ArrayList<String> srcarray;
+	private Iterator<String> it;
 	
 	public String course;
 	public String teacher;
+	public double classGrade;
+	
+	public ArrayList<Category> categories;
+	public ArrayList<Assignment> assignments;
 	
 	public Grades(String course, String source) {
 		this.course = course;
 		src = source.substring(source.indexOf("<div class=\"edlDocViewContents\" style=\"\" >"), source.indexOf("</div>" , source.indexOf("<div class=\"edlDocViewContents\" style=\"\" >")));
-		textsrc = shaveSrc(src);
+		srcarray = shaveSrc(src);
 		
+		//Collect teacher name
 		teacher = src.substring(src.indexOf("Teacher: ") + 9, src.indexOf("<", src.indexOf("Teacher: ")));
 		System.out.println("Class: " + course + " tought by teacher: " + teacher);
 		
-		String scores = textsrc.substring(textsrc.indexOf("Category"),textsrc.indexOf("Current Assignments",textsrc.indexOf("Category"))).replace("\r\n", "|").replace("\n","").replace("&nbsp;", "*").replace(" / ","/").trim();
-		String work = textsrc.substring(textsrc.indexOf("Current Assignments",textsrc.indexOf("Current Assignments"))).replace("\r\n", " ").replace("/n"," ").replace("&nbsp", "*").trim();
-		// All new lines are replaced with | and nbsp; is replaced with *. This allows for easier visualization
+		//initiate arraylists for grades
+		categories = new ArrayList<Category>();
+		assignments = new ArrayList<Assignment>();
+		it = srcarray.iterator();
 		
-		
-		System.out.println(scores);
-		//System.out.println(work);
-		
-		ArrayList<Category> categories = new ArrayList<Category>();
-		int i = scores.indexOf("*");
-		
-		while(i<scores.indexOf("*|Current Grade")){
-			categories.add(new Category(scores.substring(i+1, scores.indexOf("*",i+1))));//halp! This code is TERRIBLE!! it feels hardcoded :/ Still sends the class 2x | for some reason
-			i = scores.indexOf("*",i+1);
+		//Find category header, and start parsing for grades there
+		advanceIterator("Category");
+		while (true) {
+			advanceIterator("[STARTROW]");
+			String next = it.next();
+			if (next.equals("Current Grade"))
+				break;
+			categories.add(new Category(next, it.next(), it.next(), it.next())); //in every row, feed next parts of iterator
 		}
 		
-		for(Category f:categories){
+		//after the categories there is current grades row, found here
+		classGrade = Double.parseDouble(it.next()); //TODO: see if this breaks when no grades entered
+		advanceIterator("Current Assignments");
+		advanceIterator("[STARTROW]");
+		
+		//test statement
+		for (Category f : categories){
 			System.out.println(f);
 		}
 		
-		ArrayList<Assignment> assignments = new ArrayList<Assignment>();
+		//after current grade, assignments start
+		advanceIterator("[STARTROW]");
+		while (it.hasNext()) {
+			it.next();
+			assignments.add(new Assignment(it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), it.next()));
+			advanceIterator("[STARTROW]");
+		}
+		
+		//test statement
+		for (Assignment a : assignments) {
+			System.out.println(a);
+		}
 	}
 	
-	private String shaveSrc(String src) {
+	/**
+	 * Advances location of private (it)erator
+	 * @param toWhat var to advance to, if not found, advances to end
+	 */
+	
+	private void advanceIterator(String toWhat) {
+		while (it.hasNext())
+			if (it.next().equals(toWhat))
+				break;
+	}
+	
+	/**
+	 * Creates an array list of all rows, delimited by [STARTROW] and [ENDROW]
+	 * @param src source to clean up
+	 * @return arraylist of source
+	 */
+	
+	private ArrayList<String> shaveSrc(String src) {
 		boolean inHTML = false;
 		String output = "";
-		for (char c : src.toCharArray()) {
-			if (c == '<')
+		char[] array = src.toCharArray();
+		for (int i = 0; i < array.length; i++) {
+			char c = array[i];
+			if (c == '<') {
 				inHTML = true;
+				if ((array[i+1] + "" + array[i+2]).toLowerCase().equals("tr"))
+					output += "\n[STARTROW]\n";
+				if ((array[i+1] + "" + array[i+2] + array[i+3]).toLowerCase().equals("/tr"))
+					output += "\n[ENDROW]\n";
+			}
 			if (!inHTML)
 				output += c;
 			if (c == '>')
 				inHTML = false;
 		}
-		return output;
+		
+		String[] srcArray = output.split("\n");
+		ArrayList<String> srcList = new ArrayList<String>();
+		for (String s : srcArray)
+			if (!s.replaceAll("\n", "").trim().equals(""))
+				srcList.add(s.replaceAll("\n", "").trim());
+		return srcList;
 	}
 }
 
@@ -61,38 +114,29 @@ class Category {
 	double pts;
 	double max; 
 	double percent;
+	double accpercent;
 	
-	Category(String src) {//Source is a single row of info
-//		if((src.length()>1)){
-////			System.out.println(src + "\t" + src.length());
-////			int i = src.indexOf("|");
-////			//System.out.println(i);
-////			this.name = i!=src.lastIndexOf("|") ? src.substring(i+1,src.indexOf("|",i+1)) : "";
-////			i= i!=src.lastIndexOf("|") ? src.indexOf("|",i+1): src.lastIndexOf("|");
-////			//System.out.println(i);
-////			this.weight = i!=src.lastIndexOf("|") ? Integer.valueOf(src.substring(i+1,src.indexOf("|",i+1))) : 0;
-////			i= i!=src.lastIndexOf("|") ? src.indexOf("|",i+1): src.lastIndexOf("|");
-////			//System.out.println(i);
-////			this.pts = i!=src.lastIndexOf("|") ? Double.valueOf(src.substring(i+1,src.indexOf("/",i+1))) : 0.0;
-////			i= i!=src.lastIndexOf("|") ? src.indexOf("/",i+1): src.lastIndexOf("|");
-////			//System.out.println(i);
-////			this.max = i!=src.lastIndexOf("|") ? Double.valueOf(src.substring(i+1,src.indexOf("|",i+1))) : 0.0;
-////			i= i!=src.lastIndexOf("|") ? src.indexOf("|",i+1): src.lastIndexOf("|");
-////			this.percent = i!=src.lastIndexOf("|") ? Double.valueOf(src.substring(i+1,src.indexOf("|",i+1))) : 0.0;	
-//		}else{
-//			return;
-//		}
-		
-		//4 slots surrounded by | | first is name second is weight third is pts/max last is percent
-		int i=0;
-		for (int x=0;x<=3;x++) {
+	boolean incomplete = false;
+	
+	Category(String name, String weight, String pts, String percent) {//Source is a single row of info
+		this.name = name;
+		this.weight = Integer.parseInt(weight);
+		try {
+			this.pts = Double.parseDouble(pts.split("/")[0].trim());
+			this.max = Double.parseDouble(pts.split("/")[1].trim());
+			this.percent = Double.parseDouble(percent);
+			accpercent = this.pts/max;
+		} catch (NumberFormatException e) {
+			this.pts = 0;
+			this.max = 0;
+			this.percent = 0;
+			accpercent = 0;
 			
+			incomplete = true;
 		}
-		
-		
 	}
 	
-	public String toString(){
+	public String toString() {
 		return name + ": " + weight + " " + pts + "/" + max + " = " + percent + "%";
 	}
 }
@@ -101,12 +145,37 @@ class Assignment {
 	String name;
 	String due;
 	String category;
-	String weight;
+	double weight;
 	double grade;
 	double max;
 	char letter;
 	
-	Assignment(String src) {
-		
+	boolean incomplete = false;
+	
+	Assignment(String name, String due, String category, String weight, String grade, String max, String letter) {
+		this.name = name;
+		this.due = due;
+		this.category = category;
+		try {
+			this.weight = Double.valueOf(weight);
+			this.grade = Double.valueOf(grade);
+			this.max = Double.valueOf(max);
+			this.letter = letter.charAt(0);
+		} catch (NumberFormatException e) {
+			this.weight = 0;
+			this.grade = 0;
+			try {
+				this.max = Double.valueOf(max);
+			} catch (NumberFormatException e2) {
+				this.max = 0;
+			}
+			this.letter = ' ';
+
+			incomplete = true;
+		}
+	}
+
+	public String toString() {
+		return name + " - Due: " + due + " Category: " + category + " Weight: " + weight + " Grade: " + grade + "/" + max + " = " + letter;
 	}
 }
