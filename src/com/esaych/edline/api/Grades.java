@@ -23,7 +23,7 @@ public class Grades {
 		
 		//Collect teacher name
 		course.setTeacher(src.substring(src.indexOf("Teacher: ") + 9, src.indexOf("<", src.indexOf("Teacher: "))));
-		System.out.println("Class: " + course.getCourseName() + " tought by teacher: " + course.getTeacher());
+		System.out.println("Class: " + course.getCourseName() + " taught by teacher: " + course.getTeacher());
 		
 		//initiate arraylists for grades
 		categories = new ArrayList<Category>();
