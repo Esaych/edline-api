@@ -8,23 +8,22 @@ public class Grades {
 	private ArrayList<String> srcarray;
 	private Iterator<String> it;
 	
-	public String course;
-	public String teacher;
-	public double classGrade;
+	private Course course;
+	private double classGrade;
 	
-	public ArrayList<Category> categories;
-	public ArrayList<Assignment> assignments;
+	private ArrayList<Category> categories;
+	private ArrayList<Assignment> assignments;
 	
-	public Grades(String course, String source) {
-		this.course = course;
+	public Grades(Course mycourse, String source) {
+		this.course = mycourse;
 		src = source.substring(source.indexOf("<div class=\"edlDocViewContents\" style=\"\" >"), source.indexOf("</div>" , source.indexOf("<div class=\"edlDocViewContents\" style=\"\" >")));
 		srcarray = shaveSrc(src);
 		
 		System.out.println("\n\n");
 		
 		//Collect teacher name
-		teacher = src.substring(src.indexOf("Teacher: ") + 9, src.indexOf("<", src.indexOf("Teacher: ")));
-		System.out.println("Class: " + course + " tought by teacher: " + teacher);
+		course.setTeacher(src.substring(src.indexOf("Teacher: ") + 9, src.indexOf("<", src.indexOf("Teacher: "))));
+		System.out.println("Class: " + course.getCourseName() + " tought by teacher: " + course.getTeacher());
 		
 		//initiate arraylists for grades
 		categories = new ArrayList<Category>();
@@ -108,6 +107,22 @@ public class Grades {
 			if (!s.replaceAll("\n", "").trim().equals(""))
 				srcList.add(s.replaceAll("\n", "").trim());
 		return srcList;
+	}
+	
+	public Course getCourse() {
+		return course;
+	}
+	
+	public ArrayList<Category> getCategories() {
+		return categories;
+	}
+	
+	public ArrayList<Assignment> getAssignments() {
+		return assignments;
+	}
+	
+	public double overallGrade() {
+		return classGrade;
 	}
 }
 

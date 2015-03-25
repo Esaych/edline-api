@@ -13,7 +13,7 @@ import org.jsoup.nodes.Document;
 public class Edline {
 	public static String school;
 	public static String name;
-	private static ArrayList<Class> classList = new ArrayList<Class>();
+	private static ArrayList<Course> classList = new ArrayList<Course>();
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Logging In...");
@@ -22,7 +22,6 @@ public class Edline {
 			writeLoginFile();
 			System.exit(0);
 		}
-		@SuppressWarnings("resource")
 		Scanner creds = new Scanner(file);
 		String user = "";
 		String pass = "";
@@ -69,7 +68,7 @@ public class Edline {
 
 		int i = 0;
 		do {
-			classList.add(new Class(doc.select("div#myClasses"+i).attr("title"), doc.select("div#myClasses"+i).attr("action"), res));
+			classList.add(new Course(doc.select("div#myClasses"+i).attr("title"), doc.select("div#myClasses"+i).attr("action"), res));
 			i++;
 		} while (!doc.select("div#myClasses"+i).attr("title").equals(""));
 		

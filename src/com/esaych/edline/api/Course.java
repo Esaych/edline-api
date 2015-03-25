@@ -7,14 +7,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 
-public class Class {
+public class Course {
 	
-	public String course;
-	public String link;
-	public Grades grades;
-	public String teacher;
+	private String course;
+	private String link;
+	private Grades grades;
+	private String teacher;
 	
-	public Class(String courseName, String link, Response res) {
+	public Course(String courseName, String link, Response res) {
 		this.course = courseName;
 		course = toTitleCase(course.replaceAll("[0-9]", "").replaceAll(" - ", "").replaceAll("\\(.*?\\)","")).trim();
 		
@@ -29,7 +29,7 @@ public class Class {
 		
 		res = Connect.meTo(doc.select("iframe#docViewBodyFrame").attr("src"));
 
-		grades = new Grades(course, res.body());
+		grades = new Grades(this, res.body());
 		
 		} catch (IOException e) {
 			System.out.println("Failed to load grades, not a class with grades");
@@ -37,7 +37,7 @@ public class Class {
 		}
 	}
 	
-	public String toTitleCase(String givenString) {
+	private String toTitleCase(String givenString) {
 	    String[] arr = givenString.split(" ");
 	    String str = "";
 	    for (String s : arr)
@@ -48,4 +48,24 @@ public class Class {
 	    			str += s.toUpperCase().charAt(0) + s.toLowerCase().substring(1) + " ";
 	    return str;
 	}  
+	
+	public String getCourseName() {
+		return course;
+	}
+	
+	public Grades getGrades() {
+		return grades;
+	}
+	
+	public String getLink() {
+		return link;
+	}
+	
+	protected void setTeacher(String t) {
+		teacher = t;
+	}
+	
+	public String getTeacher() {
+		return teacher;
+	}
 }
