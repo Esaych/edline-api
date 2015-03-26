@@ -16,7 +16,7 @@ public class Connect {
 		Response res = Jsoup.connect(EDLINE_URL + "/InterstitialLogin.page").timeout(0).userAgent("Chrome/12.0.742.122").execute();
 
 		Map<String, String> preLogCookies = res.cookies();
-		System.out.println("Pre Login Cookies: " + preLogCookies);
+//		System.out.println("Pre Login Cookies: " + preLogCookies);
 
 		res = Jsoup.connect(EDLINE_URL + "/post/InterstitialLogin.page")
 				.data("TCNK", "authenticationEntryComponent", 
@@ -37,9 +37,9 @@ public class Connect {
 
 		loginCookies = res.cookies();
 		loginCookies.putAll(preLogCookies);
-		System.out.println("Login Cookies: " + loginCookies);
+//		System.out.println("Login Cookies: " + loginCookies);
 
-		System.out.println("Connected to: " + res.url());
+//		System.out.println("Connected to: " + res.url());
 		if (res.url().toString().contains("Notification.page")) {
 			System.out.println("Username and Password Incorrect");
 			System.exit(1);

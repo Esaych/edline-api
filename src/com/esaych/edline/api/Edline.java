@@ -13,10 +13,10 @@ import org.jsoup.nodes.Document;
 public class Edline {
 	public static String school;
 	public static String name;
-	private static ArrayList<Course> classList = new ArrayList<Course>();
+	private static ArrayList<Course> courseList = new ArrayList<Course>();
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("Logging In...");
+//		System.out.println("Logging In...");
 		File file = new File("credentials.txt");
 		if (!file.exists()) {
 			writeLoginFile();
@@ -55,27 +55,42 @@ public class Edline {
 	 * @param src
 	 */
 	
-	public static void parseClasses(Response res) {
+	public static ArrayList<Course> parseClasses(Response res) {
 		String src = res.body();
 		school = src.substring(src.indexOf("<title>") + 7, src.indexOf("</title>") - 11); 
-		System.out.println("Attending School: " + school);
+//		System.out.println("Attending School: " + school);
 		
 		int magicNum = src.indexOf("class=\"ed-studentName notranslate\" tabindex=\"-1\">") + 49;
 		name = src.substring(magicNum, src.indexOf("</a>", magicNum));
-		System.out.println("Name: " + name);
+//		System.out.println("Name: " + name);
 		
 		Document doc = Jsoup.parse(src.substring(src.indexOf("<div type=\"menu\" title=\"My Classes"), src.indexOf("<div type=\"menu\" title=\"My Content\"")));
 
 		int i = 0;
 		do {
-			classList.add(new Course(doc.select("div#myClasses"+i).attr("title"), doc.select("div#myClasses"+i).attr("action"), res));
+			courseList.add(new Course(doc.select("div#myClasses"+i).attr("title"), doc.select("div#myClasses"+i).attr("action"), res));
 			i++;
 		} while (!doc.select("div#myClasses"+i).attr("title").equals(""));
 		
-		System.out.println("Class List: " + classList);
+//		System.out.println("Class List: " + courseList);
+		
+		return courseList;
 	}
 	
-
+	public static Course getCourse(String name) {
+		for (Course c : courseList)
+			if (c.getCourseName().toLowerCase().contains(name.toLowerCase()))
+				return c;
+		return null;
+	}
+	
+	public static void load(String user, String pass) {
+		try {
+			parseClasses(Connect.login(user, pass));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 
 }

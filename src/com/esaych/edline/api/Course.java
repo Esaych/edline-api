@@ -13,24 +13,27 @@ public class Course {
 	private String link;
 	private Grades grades;
 	private String teacher;
+	private Response res;
 	
 	public Course(String courseName, String link, Response res) {
 		this.course = courseName;
 		course = toTitleCase(course.replaceAll("[0-9]", "").replaceAll(" - ", "").replaceAll("\\(.*?\\)","")).trim();
 		
 		this.link = link;
-		
+	}
+
+	public void loadAssignments(Response res) {
 		try {
-		res = Connect.meTo(Connect.EDLINE_URL + link + "/Current_Assignments_Report");
+			res = Connect.meTo(Connect.EDLINE_URL + link + "/Current_Assignments_Report");
 
-		Document doc = Jsoup.parse(res.body());
-		if (doc.select("iframe#docViewBodyFrame").attr("src").equals(""))
-			return;
-		
-		res = Connect.meTo(doc.select("iframe#docViewBodyFrame").attr("src"));
+			Document doc = Jsoup.parse(res.body());
+			if (doc.select("iframe#docViewBodyFrame").attr("src").equals(""))
+				return;
 
-		grades = new Grades(this, res.body());
-		
+			res = Connect.meTo(doc.select("iframe#docViewBodyFrame").attr("src"));
+
+			grades = new Grades(this, res.body());
+
 		} catch (IOException e) {
 			System.out.println("Failed to load grades, not a class with grades");
 			e.printStackTrace();
@@ -54,6 +57,8 @@ public class Course {
 	}
 	
 	public Grades getGrades() {
+		if (grades == null)
+			loadAssignments(res);
 		return grades;
 	}
 	
