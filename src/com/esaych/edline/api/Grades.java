@@ -14,6 +14,12 @@ public class Grades {
 	private ArrayList<Category> categories;
 	private ArrayList<Assignment> assignments;
 	
+	/**
+	 * Grades object which keeps track of the assignments and current grade of the class
+	 * @param mycourse course this belongs to
+	 * @param source of the assignments report
+	 */
+	
 	public Grades(Course mycourse, String source) {
 		this.course = mycourse;
 		src = source.substring(source.indexOf("<div class=\"edlDocViewContents\" style=\"\" >"), source.indexOf("</div>" , source.indexOf("<div class=\"edlDocViewContents\" style=\"\" >")));
@@ -136,6 +142,14 @@ class Category {
 	
 	boolean incomplete = false;
 	
+	/**
+	 * Category to keep track of information in the Summative, Formative, Homework, etc
+	 * @param name
+	 * @param weight
+	 * @param pts
+	 * @param percent
+	 */
+	
 	Category(String name, String weight, String pts, String percent) {//Source is a single row of info
 		this.name = name;
 		this.weight = Integer.parseInt(weight);
@@ -169,6 +183,17 @@ class Assignment {
 	char letter;
 	
 	boolean incomplete = false;
+	
+	/**
+	 * Assignment to keep track of individual assignment data in the assignments report
+	 * @param name
+	 * @param due
+	 * @param category
+	 * @param weight
+	 * @param grade
+	 * @param max
+	 * @param letter
+	 */
 	
 	Assignment(String name, String due, String category, String weight, String grade, String max, String letter) {
 		this.name = name;

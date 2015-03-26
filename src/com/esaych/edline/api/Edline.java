@@ -37,6 +37,10 @@ public class Edline {
 		
 	}
 	
+	/**
+	 * Creates file credentials.txt for user to write in during test scripts
+	 */
+	
 	private static void writeLoginFile() {
 		FileWriter fw;
 		try {
@@ -77,12 +81,24 @@ public class Edline {
 		return courseList;
 	}
 	
+	/**
+	 * Returns the course by name from courseList
+	 * @param name course name to get
+	 * @return Course of that name, or null if not found
+	 */
+	
 	public static Course getCourse(String name) {
 		for (Course c : courseList)
 			if (c.getCourseName().toLowerCase().contains(name.toLowerCase()))
 				return c;
 		return null;
 	}
+	
+	/**
+	 * Standard login and password to load Edline
+	 * @param user
+	 * @param pass
+	 */
 	
 	public static void load(String user, String pass) {
 		try {

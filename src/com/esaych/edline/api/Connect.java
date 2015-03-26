@@ -12,6 +12,14 @@ public class Connect {
 	private static Map<String, String> loginCookies;
 	public static final String EDLINE_URL = "https://www.edline.net";
 	
+	/**
+	 * Login to Edline
+	 * @param username
+	 * @param password
+	 * @return response of Edline's connection
+	 * @throws IOException by Jsoup
+	 */
+	
 	public static Response login(String username, String password) throws IOException {
 		Response res = Jsoup.connect(EDLINE_URL + "/InterstitialLogin.page").timeout(0).userAgent("Chrome/12.0.742.122").execute();
 
@@ -47,6 +55,13 @@ public class Connect {
 
 		return res;
 	}
+	
+	/**
+	 * Connects to a webpage using the cookies of the current session
+	 * @param url to connect to
+	 * @return response of webpage
+	 * @throws IOException called by Jsoup
+	 */
 	
 	public static Response meTo(String url) throws IOException {
 		return Jsoup.connect(url)

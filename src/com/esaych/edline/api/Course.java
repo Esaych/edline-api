@@ -15,14 +15,25 @@ public class Course {
 	private String teacher;
 	private Response res;
 	
+	/**
+	 * Course stores information regarding a classes found on the edline page
+	 * @param courseName name of the course
+	 * @param link to class homepage
+	 * @param res the response of the edline homepage
+	 */
+	
 	public Course(String courseName, String link, Response res) {
 		this.course = courseName;
 		course = toTitleCase(course.replaceAll("[0-9]", "").replaceAll(" - ", "").replaceAll("\\(.*?\\)","")).trim();
-		
+		this.res = res;
 		this.link = link;
 	}
 
-	public void loadAssignments(Response res) {
+	/**
+	 * Parse the Current Assignments Report for this class
+	 */
+	
+	public void loadAssignments() {
 		try {
 			res = Connect.meTo(Connect.EDLINE_URL + link + "/Current_Assignments_Report");
 
@@ -39,6 +50,12 @@ public class Course {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Title case the given string
+	 * @param givenString
+	 * @return returns the Title Case Version of the String
+	 */
 	
 	private String toTitleCase(String givenString) {
 	    String[] arr = givenString.split(" ");
@@ -58,7 +75,7 @@ public class Course {
 	
 	public Grades getGrades() {
 		if (grades == null)
-			loadAssignments(res);
+			loadAssignments();
 		return grades;
 	}
 	
