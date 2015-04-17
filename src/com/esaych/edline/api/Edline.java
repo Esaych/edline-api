@@ -16,7 +16,7 @@ public class Edline {
 	private static ArrayList<Course> courseList = new ArrayList<Course>();
 
 	public static void main(String[] args) throws Exception {
-//		System.out.println("Logging In...");
+		System.out.println("Logging In...");
 		File file = new File("credentials.txt");
 		if (!file.exists()) {
 			writeLoginFile();
@@ -32,9 +32,10 @@ public class Edline {
 			writeLoginFile();
 		user = user.substring(9, user.length());
 		pass = pass.substring(9, pass.length());
-		Response res = Connect.login(user, pass);
-		parseClasses(res);
-		
+		ArrayList<Course> courses = load(user, pass);
+		for (Course c : courses)
+			if (c.getGrades() != null)
+			c.getGrades().toString();
 	}
 	
 	private static void writeLoginFile() {
@@ -58,11 +59,11 @@ public class Edline {
 	public static ArrayList<Course> parseClasses(Response res) {
 		String src = res.body();
 		school = src.substring(src.indexOf("<title>") + 7, src.indexOf("</title>") - 11); 
-//		System.out.println("Attending School: " + school);
+		System.out.println("Attending School: " + school);
 		
 		int magicNum = src.indexOf("class=\"ed-studentName notranslate\" tabindex=\"-1\">") + 49;
 		name = src.substring(magicNum, src.indexOf("</a>", magicNum));
-//		System.out.println("Name: " + name);
+		System.out.println("Name: " + name);
 		
 		Document doc = Jsoup.parse(src.substring(src.indexOf("<div type=\"menu\" title=\"My Classes"), src.indexOf("<div type=\"menu\" title=\"My Content\"")));
 
@@ -72,7 +73,7 @@ public class Edline {
 			i++;
 		} while (!doc.select("div#myClasses"+i).attr("title").equals(""));
 		
-//		System.out.println("Class List: " + courseList);
+		System.out.println("Class List: " + courseList);
 		
 		return courseList;
 	}
@@ -84,12 +85,13 @@ public class Edline {
 		return null;
 	}
 	
-	public static void load(String user, String pass) {
+	public static ArrayList<Course> load(String user, String pass) {
 		try {
-			parseClasses(Connect.login(user, pass));
+			return parseClasses(Connect.login(user, pass));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return new ArrayList<Course>();
 	}
 	
 

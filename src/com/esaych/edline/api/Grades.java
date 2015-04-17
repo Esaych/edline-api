@@ -19,11 +19,11 @@ public class Grades {
 		src = source.substring(source.indexOf("<div class=\"edlDocViewContents\" style=\"\" >"), source.indexOf("</div>" , source.indexOf("<div class=\"edlDocViewContents\" style=\"\" >")));
 		srcarray = shaveSrc(src);
 		
-//		System.out.println("\n\n");
+		System.out.println("\n");
 		
 		//Collect teacher name
 		course.setTeacher(src.substring(src.indexOf("Teacher: ") + 9, src.indexOf("<", src.indexOf("Teacher: "))));
-//		System.out.println("Class: " + course.getCourseName() + " taught by teacher: " + course.getTeacher());
+		System.out.println("Class: " + course.getCourseName() + " taught by teacher: " + course.getTeacher());
 		
 		//initiate arraylists for grades
 		categories = new ArrayList<Category>();
@@ -41,15 +41,20 @@ public class Grades {
 		}
 		
 		//after the categories there is current grades row, found here
-		classGrade = Double.parseDouble(it.next()); //TODO: see if this breaks when no grades entered
-//		System.out.println("\nCurrent Grade: " + classGrade + "%\n");
+		String gradeIn = it.next();
+		if (gradeIn.equals("&nbsp;")) {
+			System.out.println("No Assignments");
+			return;
+		}
+		classGrade = Double.parseDouble(gradeIn);
+		System.out.println("\nCurrent Grade: " + classGrade + "%\n");
 		advanceIterator("Current Assignments");
 		advanceIterator("[STARTROW]");
 //		
 //		//test statement
-//		for (Category f : categories){
-//			System.out.println(f);
-//		}
+		for (Category f : categories){
+			System.out.println(f);
+		}
 		
 		//after current grade, assignments start
 		advanceIterator("[STARTROW]");
@@ -60,9 +65,9 @@ public class Grades {
 		}
 		
 //		//test statement
-//		for (Assignment a : assignments) {
-//			System.out.println(a);
-//		}
+		for (Assignment a : assignments) {
+			System.out.println(a);
+		}
 	}
 	
 	/**
@@ -187,7 +192,7 @@ class Assignment {
 			} catch (NumberFormatException e2) {
 				this.max = 0;
 			}
-			this.letter = (letter + ' ').charAt(0);
+			this.letter = (letter + ' ').replace('&', '~').charAt(0);
 
 			incomplete = true;
 		}
