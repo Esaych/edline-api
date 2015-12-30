@@ -1,6 +1,10 @@
 # edline-api
 Java http://www.edline.net Parser, and API
 
+**This project requires jsoup for its web connection.**
+Download at: http://jsoup.org/download
+
+
 **Quick Start:**
 
 Get all course names:
