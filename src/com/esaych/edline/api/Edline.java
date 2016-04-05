@@ -35,7 +35,7 @@ public class Edline {
 		ArrayList<Course> courses = load(user, pass);
 		for (Course c : courses)
 			if (c.getGrades() != null)
-			c.getGrades().toString();
+				c.getGrades().toString();
 	}
 	
 	private static void writeLoginFile() {

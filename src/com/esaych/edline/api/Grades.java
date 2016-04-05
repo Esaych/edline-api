@@ -65,8 +65,17 @@ public class Grades {
 		//after current grade, assignments start
 		advanceIterator("[STARTROW]");
 		while (it.hasNext()) {
-			it.next();
-			assignments.add(new Assignment(it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), it.next()));
+			String[] assignmentParams = new String[8];
+			for (int i = 0; i <= 7; i++) {
+				String nextParam = it.next();
+//				System.out.println(i + ": " + nextParam);
+				if (!nextParam.equals("[ENDROW]"))
+					assignmentParams[i] = nextParam;
+				else
+					break;
+			}
+			if (assignmentParams[7] != null)
+				assignments.add(new Assignment(assignmentParams[1], assignmentParams[2], assignmentParams[3], assignmentParams[4], assignmentParams[5], assignmentParams[6], assignmentParams[7]));
 			advanceIterator("[STARTROW]");
 		}
 		
